@@ -92,7 +92,8 @@ def recognition_face(msg):
         height, width = cv_image.shape[:2]
 
         # 画像中の顔をすべて検出する
-        face_locations = face_recognition.face_locations(cv_image)
+        face_locations = face_recognition.face_locations(cv_image, model="cnn")
+        #face_locations = face_recognition.face_locations(cv_image, model="hog")
         face_encodings = face_recognition.face_encodings(cv_image, face_locations)
 
  
