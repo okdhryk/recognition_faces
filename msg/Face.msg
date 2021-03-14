@@ -1,0 +1,10 @@
+std_msgs/Header header
+string name
+string    title
+float32     reliability
+string    gender	
+int32   age
+geometry_msgs/Point posLeftTop
+geometry_msgs/Point posRightBottom
+int32   width
+int32  height
