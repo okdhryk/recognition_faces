@@ -41,8 +41,8 @@
     </node>
 
     <node name="recog_faces" pkg="recognition_faces" type="recog_faces.py" output="screen">
-      <param name="do_display" type="bool" value="False" />
-       <param name="recognition_reliability" value="0.5"/>
+      <param name="do_display" type="bool" value="True" />
+       <param name="recognition_threshold" value="0.5"/>
     </node>
     
 </launch>

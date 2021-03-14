@@ -8,7 +8,6 @@
 
 
 
-
 OpenCVで使うBGR系からface_recognitionで使うRGB系に変換する
 cv_image = bridge.imgmsg_to_cv2(msg, "bgr8")
 
@@ -28,34 +27,14 @@ from recognition_faces.msg import *
 from std_msgs.msg import String
 from std_msgs.msg import *
 
-
-
-
-#顔認証用のカスタマイズメッセージのテスト
-#face=Face()
-#face.name="Unknown"
-
-
-#fs=Faces()
-#fs.faces=[]
-#fs.faces.append(face)
-#fs.faces.append(face)
-
-#print fs
-
-
-
-
-
 # 認識結果を画像としてトピックにPublishするか．デバッグ用
 # 画像をPublishすると処理が遅くなる
 DO_DISPLAY=rosparam.get_param("/recog_faces/do_display")
-print DO_DISPLAY
 
 #顔認証のしきい値（0〜１）
 #マッチ距離がこれ以下だとUnknownになる
 #ベストマッチアルゴリズム（登録してある画像の中で一番のマッチ度の人物と認証する）なので 0.5でもOKか？
-RECOGNITION_RELIABILITY=rosparam.get_param("/recog_faces/recognition_reliability" )
+RECOGNITION_THRESHOLD=rosparam.get_param("/recog_faces/recognition_threshold" )
 
 
 #パッケージのディレクトリ
@@ -65,8 +44,8 @@ pkg_dir = roslib.packages.get_pkg_dir('recognition_faces')
 #［氏名］.jpgのような形式
 known_faces = glob.glob(pkg_dir+'/data/known_faces/*.jpg')
 known_face_number =  len( known_faces )
-
 known_face_names =[]
+print("<<<--- registared people")
 for f in glob.glob(pkg_dir+'/data/known_faces/*.jpg'):
     print(os.path.split(f)[1])  #ファイル名
     print (os.path.splitext(os.path.basename(f))[0]) #拡張子なし（氏名）
@@ -114,15 +93,15 @@ def recognition_face(msg):
             face_distances = face_recognition.face_distance(known_face_encodings, face_encoding)
             best_match_index = np.argmin(face_distances)
             if matches[best_match_index]:
-                print (1.0 - face_distances[best_match_index] )*100 #信頼度　０〜１００
+   #             print (1.0 - face_distances[best_match_index] )*100 #信頼度　０〜１００
                 
-                if  face_distances[best_match_index] < (1.0 - RECOGNITION_RELIABILITY):
+                if  face_distances[best_match_index] < (1.0 - RECOGNITION_THRESHOLD):
                     name = known_face_names[best_match_index]
                     face=Face()
                     face.name=name
                     face.title="professor"
                     face.reliability = 1.0 - face_distances[best_match_index]
-                    face.gender="male"
+                    face.gender="neutral"
                     face.age=99
                     face.posLeftTop.x=left
                     face.posLeftTop.y=top
@@ -146,7 +125,7 @@ def recognition_face(msg):
         #print faces
         
         if len(faces.faces) != 0:
-            pub1 = rospy.Publisher('reco_face1',Faces , queue_size=1)
+            pub1 = rospy.Publisher('reco_face',Faces , queue_size=1)
             pub1.publish(faces)
             
             if DO_DISPLAY:
