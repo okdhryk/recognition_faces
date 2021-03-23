@@ -71,8 +71,8 @@ def recognition_face(msg):
         height, width = cv_image.shape[:2]
 
         # 画像中の顔をすべて検出する
-        face_locations = face_recognition.face_locations(cv_image, model="cnn")
-        #face_locations = face_recognition.face_locations(cv_image, model="hog")
+        #face_locations = face_recognition.face_locations(cv_image, model="cnn")
+        face_locations = face_recognition.face_locations(cv_image, model="hog")
         face_encodings = face_recognition.face_encodings(cv_image, face_locations)
 
  
@@ -93,7 +93,7 @@ def recognition_face(msg):
             face_distances = face_recognition.face_distance(known_face_encodings, face_encoding)
             best_match_index = np.argmin(face_distances)
             if matches[best_match_index]:
-   #             print (1.0 - face_distances[best_match_index] )*100 #信頼度　０〜１００
+                print (1.0 - face_distances[best_match_index] )*100 #信頼度　０〜１００
                 
                 if  face_distances[best_match_index] < (1.0 - RECOGNITION_THRESHOLD):
                     name = known_face_names[best_match_index]
